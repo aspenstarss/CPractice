@@ -3,13 +3,11 @@ int main(void)
 {
 	float H,L,W,V,M;
 	
-	printf("ÇëÊäÈë³¤¶È");
+	printf("è¯·è¾“å…¥é•¿åº¦");
 	scanf("%f",&L);
-	
-	printf("ÇëÊäÈë¿í¶È");
+	printf("è¯·è¾“å…¥å®½åº¦");
 	scanf("%f",&W);
-	
-	printf("ÇëÊäÈë¸ß¶È");
+	printf("è¯·è¾“å…¥é«˜åº¦");
 	scanf("%f",&H);
 	
 	V = H * L * W;
