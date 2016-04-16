@@ -1,0 +1,18 @@
+diff a/用体积求费用.c b/用体积求费用.c	(rejected hunks)
+@@ -3,13 +3,11 @@
+ {
+ 	float H,L,W,V,M;
+ 	
+-	printf("�����볤��");
++	printf("请输入长度");
+ 	scanf("%f",&L);
+-	
+-	printf("��������");
++	printf("请输入宽度");
+ 	scanf("%f",&W);
+-	
+-	printf("������߶�");
++	printf("请输入高度");
+ 	scanf("%f",&H);
+ 	
+ 	V = H * L * W;

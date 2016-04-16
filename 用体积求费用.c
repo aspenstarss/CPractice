@@ -3,11 +3,13 @@ int main(void)
 {
 	float H,L,W,V,M;
 	
-	printf("请输入长度");
+	printf("�����볤��");
 	scanf("%f",&L);
-	printf("请输入宽度");
+	
+	printf("��������");
 	scanf("%f",&W);
-	printf("请输入高度");
+	
+	printf("������߶�");
 	scanf("%f",&H);
 	
 	V = H * L * W;
