@@ -28,4 +28,5 @@ int main()
     // cout << endl;
     vector<int> a;
     printf("HelloWorld2!");
+    return 0;
 }
