@@ -43,7 +43,20 @@ vector<int> twoSum(vector<int>& nums, int target) {
     }
     return re;
 }
-    
+
+vector<int> twoSum2(vector<int>& nums, int target){
+    unordered_map<int, int> vis;
+    int f;
+    for(int i = 0; i < nums.size(); i++){
+        f = target - nums[i];
+        unordered_map<int, int>::iterator it = vis.find(f);
+        if(it != vis.end()){
+            return vector<int>{vis[f], i};
+        }
+        vis[nums[i]] = i;
+    }
+}
+
 int main(){
     int n, target;
     int t;
@@ -55,7 +68,7 @@ int main(){
         nums.push_back(t);
     }
     vector<int> result;
-    result = twoSum(nums, target);
+    result = twoSum2(nums, target);
     printf("%d %d", result[0], result[1]);
     return 0;
 }
