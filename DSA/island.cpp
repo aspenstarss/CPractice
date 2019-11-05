@@ -22,7 +22,7 @@ int DFS(vector<vector<int>>& grid, int x, int y){
     return nums;
 }
 
-int BFS(vector<vector<int>> grid, int x, int y){
+int BFS(vector<vector<int>>& grid, int x, int y){
     queue<pair<int, int>> q;
     int nr = grid.size();
     int nl = grid[0].size();
