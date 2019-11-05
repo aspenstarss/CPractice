@@ -8,35 +8,37 @@ using namespace std;
 class Solution{
     public:
     //O(log(min(m, n)))
-    double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2){
-        int n = nums1.size();
-        int m = nums2.size();
-        if(n > m){
+    double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
+        int n1 = nums1.size();
+        int n2 = nums2.size();
+        
+        if(n1 > n2){
             return findMedianSortedArrays(nums2, nums1);
         }
 
-        int Lmax1, Lmax2, Rmin1, Rmin2, c1, c2;
-        int lo = 0, hi = 2*n;
+        int lo = 0, hi = 2*n1, c1, c2;
+        int L1max, L2max, R1min, R2min;
+    while (lo < hi)
+    {
+        c1 = (lo + hi) / 2;
+        c2 = n1 + n2 - c1;
 
-        while(lo <= hi){
-            c1 = (lo + hi) / 2;
-            c2 = m + n - c1;
+        L1max = (c1 == 0) ? INT_MIN : nums1[(c1 - 1) / 2];
+        R1min = (c1 == 2*n1) ? INT_MAX : nums1[c1 / 2];
+        L2max = (c2 == 0) ? INT_MIN : nums2[(c2 - 1) / 2];
+        R2min = (c2 == 2*n2) ? INT_MAX : nums2[c2 / 2];
 
-            Lmax1 = (c1 == 0) ? INT_MIN : (nums1[(c1 -1) / 2]);
-            Rmin1 = (c1 == 2 * n) ? INT_MAX : (nums1[c1 / 2]);
-            Lmax2 = (c2 == 0) ? INT_MIN : (nums2[(c2 - 1) / 2]);
-            Rmin2 = (c2 == 2 * m) ? INT_MAX : (nums2[c2 / 2]);
-
-            if(Lmax1 > Rmin2){
-                hi = c1 - 1;
-            }else if(Lmax2 > Rmin1){
-                lo = c1 + 1;
-            }else{
-                break;
-            }
+        if(L1max > R2min){
+            hi = c1 - 1;
+        }else if(L2max > R1min)
+        {
+            lo = c1 + 1;
+        }else
+        {
+            break;
         }
-
-        return (max(Lmax1, Lmax2) + min(Rmin1, Rmin2)) / 2.0;
+    }
+    return (max(L1max, L2max) + min(R1min, R2min)) / 2.0;
     }
 
     //O(n+m)
@@ -103,4 +105,23 @@ int main(){
     ret = solution.findMedianSortedArrays(nums1, nums2);
     printf("%f", ret);
 	return 0;
+
+
+// int main(){
+//     vector<int> nums1, nums2;
+//     int n, m, t;
+//     scanf("%d", &n);
+//     scanf("%d", &m);
+//     for(int i = 0; i < n; i++){
+//         scanf("%d", &t);
+//         nums1.push_back(t);
+//     }
+//     for(int i = 0; i < m; i++){
+//         scanf("%d", &t);
+//         nums2.push_back(t);
+//     }
+
+//     int result = findMedianSortedArrays(nums1, nums2);
+//     printf("%d", result);
+//     return 0;
 }
