@@ -1,0 +1,188 @@
+\documentclass{article}
+% \usepackage[utf8]{inputenc}
+\usepackage{CJK}
+\usepackage[UTF8]{ctex}
+\usepackage{algorithm}
+%\usepackage{algorithmic}
+%\usepackage[top=2cm, bottom=2cm, left=2cm, right=2cm]{geometry}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{amsmath}
+ 
+\floatname{algorithm}{算法}
+\renewcommand{\algorithmicrequire}{\textbf{输入:}}
+\renewcommand{\algorithmicensure}{\textbf{输出:}}
+
+\title{算法设计与分析作业2}
+\author{杨树鑫 2019E8013261016}
+\date{November 13th , 2019}
+
+\usepackage{natbib}
+\usepackage{graphicx}
+
+\begin{document}
+
+\maketitle
+
+本次作业选做1、2、3题。
+\section{第1题 Money Robbing}
+\subsection{最优子结构和DP方程}
+用$OPT(i)$表示对前$i$个房屋抢劫得到的最优解，$value(i)$表示第$i$个房屋能抢到的金额，当这条街上的房屋数量为$n$的时候，即求$OPT(n)$,将其转换为多步决策，在第$i$步的时候，只考虑${1,2,...,i}$的房屋，从后往前考虑
+\par 1、当选择第$i$间房屋的时候，就不能选择第$i-1$间房屋，因此问题转换为$OPT(i-2)+value(i)$
+\par 2、当不选择第$i$间房屋的时候，就能选择第$i-1$间房屋，因此问题转换为$OPT(i-1)$
+\par 最优子结构就是在上述两种情况中选择解最大的决策
+\par 因此DP方程可写为
+\begin{center}
+    $OPT(i) = max\{OPT(i-1), OPT(i-2)+value(i)\}$
+\end{center}
+
+\subsection{伪代码}
+\par 伪代码如算法1所示
+
+\begin{CJK*}{UTF8}{gkai}
+    \begin{algorithm}
+        \caption{房屋抢劫}
+        \begin{algorithmic}[1] %每行显示行号
+            \Require $Array$房屋价值数组
+            \Ensure 最大抢劫值
+            \Function{Rob}{$Array$}
+                \For{$i=0$ to $n+2$}
+                    \State $OPT[i] = 0$
+                \EndFor
+                \For{$i=2$ to $n+1$}
+                    \State $OPT[i] = max\{OPT[i-1], OPT[i-2]+value[i-2]\}$
+                \EndFor
+                \State \Return{$OPT[n]$}
+            \EndFunction
+        \end{algorithmic}
+    \end{algorithm}
+\end{CJK*}
+
+\subsection{算法正确性}
+这个抢劫问题可以看做是多步决策过程，每一步都是选或者不选的决策，第一步首先考虑最后一间房屋
+\par 如果这个房屋选，则不能选与它相邻的第$i-1$间，因此只能在前$i-2$间房屋中再做决策，问题的解就由前$i-2$间房屋的最优决策加上第$i$间房屋的价值组成
+\par 如果这个房屋不选，则可以在前$i-1$间房屋中进行决策，问题的解就直接由前$i-1$间房屋的最优决策组成
+\par 每个子问题的结构相同，因此对每个子问题进行求解，就可以得到原问题的解
+\par 上述算法与此分析相同，因此算法正确
+
+\subsection{算法复杂度}
+原问题有$n$个子问题，每个子问题进行$2$次比较，因此共有$O(2n)$次运算，所以原问题的时间复杂度为
+\begin{center}
+    $T(n)$=$O(n)$ 
+\end{center} 
+\par 由于开了一个$n+2$的数组存储子问题的最优解，因此原问题的空间复杂度为
+\begin{center}
+    $O(n)$
+\end{center} 
+
+\subsection{附加问题：2、当房屋存在循环的问题}
+当存在循环时，实际上是增加了一个条件，即第一个房屋和最后一个房屋至多只能选择一个，因此可以将问题分成两个，其中一个是$\{1,2,...,n-1\}$房屋，另一个是$\{2,...,n\}$房屋，对这两个问题分别按上面的算法进行求解，其中的最大值即原问题的解
+
+\section{第2题 Node Selection}
+\subsection{最优子结构和DP方程}
+
+用$OPT(root)$表示$root$节点的最优解，$value(root)$表示$root$节点的价值，$OPT(root)[1]$表示选择了$root$节点时得到的最优解，$OPT(root)[0]$表示不选择根节点时得到的最优解，则存在两种选择的可能：
+\par 1、选择$root$节点的时候，就不能选择其子节点，因此问题转换为求$OPT(root->left)[0] + OPT(root->right)[0] + value(root)$
+\par 2、不选择$root$节点的时候，就能选择其子节点，因此问题转换为求$max\{OPT(root->left)[0], OPT(root->left)[1]\} + max\{OPT(root->right)[0], OPT(root->right)[1]\}$
+\par 最优子结构就是在上述两种情况中选择解最大的决策
+\par 因此DP方程可写为
+\begin{center}
+    $OPT(i) = max\{OPT(root->left)[0] + OPT(root->right)[0] + value(root), max\{OPT(root->left)[0], OPT(root->left)[1]\} + max\{OPT(root->right)[0], OPT(root->right)[1]\}\}$
+\end{center}
+
+\subsection{伪代码}
+\par 伪代码如算法2所示
+
+\begin{CJK*}{UTF8}{gkai}
+    \begin{algorithm}
+        \caption{二叉树选择}
+        \begin{algorithmic}[1] %每行显示行号
+            \Require $root$根节点
+            \Ensure $res[2]$选择和不选择$root$节点时分别得到的最优解
+            \Function{SelectNodes}{$root$}
+                \If{$root == NULL$}
+                    \State \Return{$\{0, 0\}$}
+                \EndIf
+                \State $left \gets$ \Call{SelectNodes}{$root->left$} 
+                \State $right \gets$ \Call{SelectNodes}{$root->right$} 
+                \State $res[0] \gets (max\{left[0], left[1]\} + max\{right[0], right[1]\})$ 
+                \State $res[1] \gets (left[0] + right[0] + root->value)$
+                \State \Return{$res$}
+            \EndFunction
+        \end{algorithmic}
+    \end{algorithm}
+\end{CJK*}
+
+\subsection{算法正确性}
+这个二叉树节点选择的问题可以看做是多步决策过程，每一步都是选或者不选根节点的决策，只是在做出根节点选择决策后，下一步决策与根节点的决策相关，
+第一步首先考虑根节点的选择问题
+\par 如果根节点选，则不能选择它的两个子节点，因此只能在它的孙子节点中再做决策，问题的解就由左子节点的两个子节点的最优决策加上右子节点的两个子节点的最优决策组成
+\par 如果这个房屋不选，则可以在它的两个子节点中进行决策，问题的解就直接由左子节点的最优决策、右子节点的最优决策和它本身的值组成
+\par 每个子问题的结构相同，因此对每个子问题进行求解，就可以得到原问题的解,上述算法与此分析相同，因此算法正确
+
+\subsection{算法复杂度}
+原问题有$n$个子问题，每个子问题进行$3$次比较，因此共有$O(3n)$次运算，所以原问题的时间复杂度为
+\begin{center}
+    $T(n)$=$O(n)$ 
+\end{center} 
+\par 由于采用了递归，最优的递归深度为$logn$, 但如果二叉树极度不平衡，成为斜二叉树时，最深的递归深度为$n$,每次递归中开了一个大小为$2$的数组存储子问题的最优解，因此原问题的空间复杂度为
+\begin{center}
+    最优：$O(logn)$
+    最坏：$O(n)$
+\end{center} 
+
+\newpage
+\section{第3题 Unique Binary Search Trees}
+\subsection{最优子结构和DP方程}
+因为这个二叉搜索树的每个元素都是唯一的，因此可以用$OPT(i)$表示由$i$个元素组成的二叉搜索树的数量，所以原问题即求解$OPT(n)$
+\par 原问题中的每个元素都可以作为根节点，原问题可以转换为更小的子问题，即求以每个元素为根节点时能组成的二叉搜索树的数量的和
+\par 以$i$表示当前元素，可以从$i$将这$n$个元素分为两部分，左边有$i-1$个元素，右边有$n-i$个元素,子问题的解即左右两边元素的笛卡尔积
+\par 因此DP方程可写为
+\begin{center}
+    $OPT(n) = sum(OPT(i-1) * OPT(n-i))，i=1,2,...n$
+\end{center}
+
+\subsection{伪代码}
+\par 伪代码如算法3所示
+
+\begin{CJK*}{UTF8}{gkai}
+    \begin{algorithm}
+        \caption{二叉树的数量}
+        \begin{algorithmic}[1] %每行显示行号
+            \Require $n$二叉搜索树的元素数量
+            \Ensure $res$可以组成的二叉搜索树数量
+            \Function{uBST}{$n$}
+                \State $OPT(0) \gets 1$
+                \State $OPT(1) \gets 1$
+                \If{$n<2$}
+                    \State \Return{$OPT[n]$}
+                \EndIf
+                \For{$i = 2$ to $n$}
+                    \State $num \gets 0$
+                    \For{$j = 1$ to $n$}
+                        \State $num$ \gets $OPT[j-1] + OPT[i-j]$
+                    \EndFor
+                    $OPT[i] \gets num$
+                \EndFor
+                \State \Return{$OPT[n]$}
+            \EndFunction
+        \end{algorithmic}
+    \end{algorithm}
+\end{CJK*}
+
+\subsection{算法正确性}
+这个二叉搜索树数量的问题可以看做是多步决策过程，每一步是以给定的所有元素中的一个为分界点，将原问题分解为两个相同的子问题
+\par 子问题是将这$n$个元素分为两部分，然后求解左边$i-1$个元素能组成的数量，和右边$n-i$个元素能组成的数量的笛卡尔积
+\par 每个子问题的结构相同，因此对每个子问题进行求解，就可以得到原问题的解上述算法与此分析相同，因此算法正确
+
+\subsection{算法复杂度}
+原问题有$n$个子问题，每个子问题进行$n$次计算，因此共有$O(n^2)$次运算，所以原问题的时间复杂度为
+\begin{center}
+    $T(n)$=$O(n^2)$ 
+\end{center} 
+\par 由于开了一个$n+1$的数组存储子问题的最优解，因此原问题的空间复杂度为
+\begin{center}
+    $O(n)$
+\end{center} 
+
+\end{document}
