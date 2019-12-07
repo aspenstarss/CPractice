@@ -1,0 +1,189 @@
+\documentclass{article}
+% \usepackage[utf8]{inputenc}
+\usepackage{xeCJK}
+\usepackage[UTF8]{ctex}
+\usepackage{algorithm}
+%\usepackage{algorithmic}
+\usepackage[top=2cm, bottom=2cm, left=2cm, right=2cm]{geometry}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{mathtools}
+\usepackage{amssymb}
+ 
+\floatname{algorithm}{算法}
+\renewcommand{\algorithmicrequire}{\textbf{输入:}}
+\renewcommand{\algorithmicensure}{\textbf{输出:}}
+
+\title{算法设计与分析作业3}
+\author{杨树鑫 2019E8013261016}
+\date{October 2th , 2019}
+
+\usepackage{natbib}
+\usepackage{graphicx}
+
+\begin{document}
+
+\maketitle
+
+本次作业选做3、4题。
+
+%----------------------------------------------------------------------------------------
+%	SECTION 1
+%----------------------------------------------------------------------------------------
+
+\section{第3题 Cut Rope}
+\subsection{算法思路描述}
+\par 1. 当$n=1,2,3,4$时，直接给出最优解；
+\par 2. 当$n > 4$时，长度为$n$的绳子可以从位置$k$被分为乘积最大的两段$a$和$b$，$a$和$b$又可以按此方法继续各自被分为乘积最大的两段，直到长度小于等于4。(在算法正确性部分将会证明$a>2, b>2,a+b=n$时，有$ab>a+b$成立，因此，对于一个长为$n(n>4)$的绳子，我们总是可以将其继续分为更小的两段，使其乘积比和更大)
+\par 再反推，由绳长为$1,2,3,4$只能组成的最大长度为7，观察$5,6,7$这三种情况的最大切法都包含3，而更大的数又可以分成这几个数，所以只需将原绳子先按长度3进行切分，切分到长度小于等于4时停止,即可得到原问题的解。
+
+\subsection{伪代码}
+\par 伪代码如算法1所示
+
+\begin{algorithm}[ht]
+    \caption{切绳子}
+    \begin{algorithmic}[1] %每行显示行号
+        \Require $n$绳子的长度
+        \Ensure 切割的最大乘积
+        \Function{CutRope}{$n$}
+            \If{$n == 1 or 2$}
+                \Return{$1$}
+            \EndIf
+            \If{$n == 3$}
+                \Return{$2$}
+            \EndIf
+            \If{$n == 4$}
+                \Return{$4$}
+            \EndIf
+            \State $k \gets 0$
+            \For{$i=5$ to $n$}
+                \State $OPT(i) \gets 3*OPT(i-3)$
+            \EndFor
+            \State \Return{$OPT(n)$}
+        \EndFunction
+    \end{algorithmic}
+\end{algorithm}
+
+\subsection{Greedy选择性质和最优子结构}
+对一根长为$n(n>4)$的绳子，我们总是可以将其继续分为3和$OPT(n-3)$的两段($OPT(n-3)$表示如果$n-3>4$，那么还继续分割，否则按平凡解给出结果)，使其乘积更大，当$n=1,2,3,4$时，可以直接给出最优解。
+\begin{center}
+    $$OPT(i)=
+\begin{cases}
+3*OPT(i-3)& \text{i>4}\\
+4& \text{i=4}\\
+2& \text{i=3}\\
+1& \text{i=1or2}\\
+\end{cases}$$
+\end{center}
+
+\subsection{算法正确性}
+首先证明当$a>2, b>2，a+b=n$时，有$ab>a+b$成立
+\par 证明:
+\begin{displaymath}
+    \begin{aligned}
+    &\because a+b=n\\
+    &\therefore b=n-a>2\\
+    &\therefore ab=a(n-a), n>a+2 \\
+    &\because ab-(a+b) \\
+\end{aligned}
+\end{displaymath}
+\begin{displaymath}
+    \begin{aligned}  
+    &=a(n-a)-n \\
+    &=na-a^2-n \\
+    &=(a-1)n-a^2 \\
+    &>(a-1)(a+2)-a^2 \\
+    &=a^2+a-2-a^2 \\
+    &=a-2 \\
+\end{aligned}
+\end{displaymath}
+\begin{displaymath}
+    \begin{aligned}
+    &\because a>2 \\
+    &\therefore ab-(a+b)>a-2>0 \\
+    &\therefore ab>a+b
+    \end{aligned}
+\end{displaymath}
+\par 根据以上证明，当$n=1,2,3,4$时，是平凡的情况，直接给出最优解。
+\par 当$n > 4$时，长度为$n$的绳子可以从位置$k$被分为乘积最大的两段$a$和$b$，$a$和$b$又可以按此方法继续各自被分为乘积最大的两段，直到长度小于等于4。再反推，由绳长为$1,2,3,4$只能组成的最大长度为7，观察$5,6,7$这三种情况的最大切法都包含3，而更大的数又可以分成这几个数，所以只需将原绳子先按长度3进行切分，切分到长度小于等于4时停止,即可得到原问题的解。
+\par 因此，对一根长为$n(n>4)$的绳子，我们总是可以将其继续分为3和$OPT(n-3)$的两段，使其乘积更大
+\par 综上，算法正确
+
+\subsection{算法复杂度}
+原问题需要计算$OPT(4) \sim OPT(n)$一遍，所以原问题的时间复杂度为
+\begin{center}
+    $T(n)$=$O(n)$ 
+\end{center} 
+\par 由于开了一个$n$的数组存储子问题的最优解，因此原问题的空间复杂度为
+\begin{center}
+    $O(n)$
+\end{center} 
+
+%----------------------------------------------------------------------------------------
+%	SECTION 2
+%----------------------------------------------------------------------------------------
+
+\section{第4题 Cross River}
+\subsection{算法思路描述}
+\par 先将整个数组按升序排序，用$i$表示当前未被选取的体重最小的人的索引，用$j$表示当前未被选取的体重最大的人的索引，然后从最大的数开始选取，直到$i=j$:
+\par 1. 如果$w[j]+w[i]>limit$，则只选择当前体重最大的人，$j$减小1；
+\par 2. 如果$w[j]+w[i] \leq limit$，则选择当前体重最大的人和最小的人，$j$减小1，$i$增大1；
+
+\subsection{伪代码}
+\par 伪代码如算法2所示
+
+\begin{algorithm}[ht]
+    \caption{过河}
+    \begin{algorithmic}[1] %每行显示行号
+        \Require $Array$体重数组$w$，$int$人数$n$, $int$最大限制$limit$
+        \Ensure 最少的船数量
+        \Function{CrossRiver}{$w$, $n$, $limit$}
+            \If{$n == 1$}
+                \Return{$1$}
+            \EndIf
+            \State\Call{sort}{$w$}
+            \State $i \gets 0, j \gets n-1$
+            \State $boat \gets 0$
+            \While{$i \leq j$}
+                \State $boat \gets boat + 1$
+                \If{$w[j]+w[i] \leq limit$}
+                    \State $i \gets i+1$
+                \EndIf
+                \State $j \gets j-1$
+            \EndWhile
+            \State \Return{$boat$}
+        \EndFunction
+    \end{algorithmic}
+\end{algorithm}
+
+\subsection{Greedy选择性质和最优子结构}
+优先选择当前未被选择的最重的人和最轻的人，如果两人体重之和满足限制，就同时载上，否则只载最重的人
+\par $w[i]$表示人的体重数组，且已按非降序排序;
+\begin{center}
+    $$OPT(i,j)=
+\begin{cases}
+    OPT(i+1, j-1)+1& \text{$w[j]+w[i] \leq limit$}\\
+    OPT(i, j-1)+1& \text{$w[j]+w[i] > limit$}\\
+\end{cases}$$
+\end{center}
+
+\subsection{算法正确性}
+1. 对只能载最重的一个人的情况，显然必须要一条船；
+\par 2. 对载了最重的一个人的情况下，只能再载一个最轻的人时，即$w[j]+w[i] = limit$时，那就必须载最轻的人才能使船的数量最小。采用反证法
+\par 假设不载最轻的人，那么想载两个人的话，重量就会超过限制，必须要再加一条船，与最少船数量矛盾
+\par 因此，必须载最轻那个人。
+\par 3. 对载了最重的一个人的情况下，还能再载不一定是最轻的人时，即$w[j]+w[i]<limit$，其解不唯一，但解中一定含有第(2)条中的情况，因此为简单起见，就选择(2)的组合方式，即可得到最小船数量。
+\par 综上，算法正确
+
+
+\subsection{算法复杂度}
+原问题将数组从两头往中间遍历一遍，所以原问题的时间复杂度为
+\begin{center}
+    $T(n)$=$O(n)$ 
+\end{center} 
+\par 由于只用了$int$变量存储结果值，没有数组等其他空间分配，因此原问题的空间复杂度为
+\begin{center}
+    $O(1)$
+\end{center} 
+
+\end{document}
