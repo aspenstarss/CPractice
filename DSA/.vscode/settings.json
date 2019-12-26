@@ -6,6 +6,9 @@
         "limits": "cpp",
         "valarray": "cpp",
         "iostream": "cpp",
-        "vector": "cpp"
+        "vector": "cpp",
+        "deque": "cpp",
+        "string": "cpp",
+        "bitset": "cpp"
     }
 }

@@ -8,7 +8,7 @@ int change(int amount, vector<int>& coins){
     
     int res = 0;
     for(int i = 1; i <= n; i++){
-        for(int j = coins[])
+        for(int j = coins[i])
         dp[amount] = dp[amount - coins[i]] + dp[amount - coins[i-1]]
     }
     return res;

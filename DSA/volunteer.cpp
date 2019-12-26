@@ -1,9 +1,8 @@
 #include <bits/stdc++.h>
 using namespace std;
-#define N 10
-#define M 10
-
-int func(vector<int>& nums);
+#define N 10001
+#define M 10001
+const double eps = 1e-7;
 
 double Mat[M][N];
 int B[M];
@@ -16,7 +15,7 @@ void pivot(int l, int e){
     }
     for(int i = 0; i < Nm; i++){
         tmp = Mat[i][e];
-        if(i != l){
+        if(i != l && fabs(Mat[i][e])>eps){
             for(int j = 0; j < Nn; j++){
                     Mat[i][j] -= tmp * Mat[l][j];
             }
@@ -39,7 +38,7 @@ int simplex(){
         int e = -1;
         double e_min = 0x7fffffff;
         for(int i = 1; i < Nn; i++){
-            if(Mat[0][i] < 0 && Mat[0][i] <= e_min && !check(i)){
+            if(Mat[0][i] < 0 && Mat[0][i] < e_min && !check(i)){
                 e = i;
                 e_min= Mat[0][i];
             }
@@ -89,6 +88,10 @@ int initialise_simplex(){
 
     int flag;
     flag = simplex();
+    if(flag == -1){
+        cout << "Unbounded!" << endl;
+        cout << Mat[0][0] << endl;
+    }
     if(Mat[0][0] != 0) return -1;
     
     // remove x_0
@@ -144,7 +147,7 @@ void solve(){
     if(flag == -1) cout << "Infeasible!" << endl;
     else
     {
-        flag = simplex();
+        int flag = simplex();
         if(flag == -1) cout << "Unbounded!" << endl;
         else
         {
@@ -155,37 +158,32 @@ void solve(){
 
     
 int main(){
-    // vector<int> nums;
-    // int n, t;
-    // scanf("%d", &n);
-    // for(int i = 0; i < n; i++){
-    //     scanf("%d", &t);
-    //     nums.push_back(t);
-    // }
+    int in_n, in_m, t;
+    cin >> in_n >> in_m;
+    m = in_n;
+    n = in_m;
+    for(int i = 1; i <= in_n; i++){
+        cin >> t;
+        Mat[i][0] = -t;
+    }
+    int s, f, c;
+    for(int i = 0; i < in_m; i++){
+        cin >> s >> f >> c;
+        Mat[0][i+1] = c;
+        for(int j = s; j <= f; j++){
+            Mat[j][i+1] = -1;
+        }
+    }
 
-    // int result = func(nums);
-    // printf("%d", result);
-    n = 3;
-    m = 3;
-    Mat[0][0] = 0; Mat[0][1] = 2; Mat[0][2] = 5; Mat[0][3] = 2; Mat[0][4] = 0; Mat[0][5] = 0; Mat[0][6] = 0;
-    Mat[1][0] = -2; Mat[1][1] = -1; Mat[1][2] = 0; Mat[1][3] = 0; Mat[1][4] = 1; Mat[1][5] = 0; Mat[1][6] = 0;
-    Mat[2][0] = -3; Mat[2][1] = -1; Mat[2][2] = -1; Mat[2][3] = 0; Mat[2][4] = 0; Mat[2][5] = 1; Mat[2][6] = 0;
-    Mat[3][0] = -4; Mat[3][1] = 0; Mat[3][2] = -1; Mat[3][3] = -1; Mat[3][4] = 0; Mat[3][5] = 0; Mat[3][6] = 1;
-    
-    // n = 2;
-    // m = 2;
-    // Mat[0][0] = 0;  Mat[0][1] = 1;  Mat[0][2] = 2;  Mat[0][3] = 0; Mat[0][4] = 0; 
-    // Mat[2][0] = -1; Mat[2][1] = -1; Mat[2][2] = -1; Mat[2][3] = 1; Mat[2][4] = 0; 
-    // Mat[1][0] = 2;  Mat[1][1] = 1;  Mat[1][2] = 1;  Mat[1][3] = 0; Mat[1][4] = 1;
-    // solve();
-
-    // n = 3;
-    // m = 4;
-    // Mat[0][0] = 0; Mat[0][1] = -1; Mat[0][2] = -14; Mat[0][3] = -6; Mat[0][4] = 0; Mat[0][5] = 0; Mat[0][6] = 0; Mat[0][7] = 0;
-    // Mat[1][0] = 4; Mat[1][1] = 1; Mat[1][2] = 1; Mat[1][3] = 1; Mat[1][4] = 1; Mat[1][5] = 0; Mat[1][6] = 0; Mat[1][7] = 0;
-    // Mat[2][0] = 2; Mat[2][1] = 1; Mat[2][2] = 0; Mat[2][3] = 0; Mat[2][4] = 0; Mat[2][5] = 1; Mat[2][6] = 0; Mat[2][7] = 0;
-    // Mat[3][0] = 3; Mat[3][1] = 0; Mat[3][2] = 0; Mat[3][3] = 1; Mat[3][4] = 0; Mat[3][5] = 0; Mat[3][6] = 1; Mat[3][7] = 0;
-    // Mat[4][0] = 6; Mat[4][1] = 0; Mat[4][2] = 3; Mat[4][3] = 1; Mat[4][4] = 0; Mat[4][5] = 0; Mat[4][6] = 0; Mat[4][7] = 1;
+    Nn = 1 + n + m;
+    Nm = 1 + m;
+    for(int i = 1; i < Nm; i++){      
+            Mat[i][n+i] = 1;
+    }
+    // Mat[0][0] = 0; Mat[0][1] = 2; Mat[0][2] = 5; Mat[0][3] = 2; Mat[0][4] = 0; Mat[0][5] = 0; Mat[0][6] = 0;
+    // Mat[1][0] = -2; Mat[1][1] = -1; Mat[1][2] = 0; Mat[1][3] = 0; Mat[1][4] = 1; Mat[1][5] = 0; Mat[1][6] = 0;
+    // Mat[2][0] = -3; Mat[2][1] = -1; Mat[2][2] = -1; Mat[2][3] = 0; Mat[2][4] = 0; Mat[2][5] = 1; Mat[2][6] = 0;
+    // Mat[3][0] = -4; Mat[3][1] = 0; Mat[3][2] = -1; Mat[3][3] = -1; Mat[3][4] = 0; Mat[3][5] = 0; Mat[3][6] = 1;
     solve();
     return 0;
 }
